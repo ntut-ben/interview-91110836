@@ -54,6 +54,7 @@ public class MemberCtrl {
     return voPage;
   }
 
+  @Operation(description = "取得會員資料")
   @PostMapping("/getMember")
   public MemberVo getMember(@RequestBody GetReq req) {
     GetQuery query = new GetQuery(req.getId());
@@ -67,6 +68,7 @@ public class MemberCtrl {
     }).orElse(null);
   }
 
+  @Operation(description = "註冊會員")
   @PostMapping("/register")
   public boolean register(@RequestBody RegisterReq req) {
     RegisterCommand command = new RegisterCommand();
@@ -74,6 +76,7 @@ public class MemberCtrl {
     return memberSvc.register(command);
   }
 
+  @Operation(description = "刪除會員")
   @PostMapping("/unRegister")
   public boolean unRegister(@RequestBody UnRegisterReq req) {
     UnRegisterCommand command = new UnRegisterCommand();
@@ -81,6 +84,7 @@ public class MemberCtrl {
     return memberSvc.unRegister(command);
   }
 
+  @Operation(description = "會員資料修改")
   @PostMapping("/edit")
   public boolean edit(@RequestBody EditReq req) {
     EditCommand command = new EditCommand();

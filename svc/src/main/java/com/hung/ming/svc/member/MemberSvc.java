@@ -36,7 +36,11 @@ public class MemberSvc implements IMemberSvc {
 
   @Override
   public MemberDto getMember(GetQuery query) {
-    return null;
+    return memberRepo.findById(query.getId()).map(entity -> {
+      MemberDto dto = new MemberDto();
+      BeanUtils.copyProperties(entity, dto);
+      return dto;
+    }).orElse(null);
   }
 
   @Override
@@ -46,7 +50,13 @@ public class MemberSvc implements IMemberSvc {
 
   @Override
   public boolean unRegister(UnRegisterCommand command) {
-    return false;
+    boolean isDelete = false;
+    boolean isExist = memberRepo.existsById(command.getId());
+    if (isExist) {
+      memberRepo.deleteById(command.getId());
+      isDelete = true;
+    }
+    return isDelete;
   }
 
   @Override
