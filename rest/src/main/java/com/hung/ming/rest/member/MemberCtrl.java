@@ -1,5 +1,6 @@
 package com.hung.ming.rest.member;
 
+import com.hung.ming.repo.util.PropertyUtilsProxy;
 import com.hung.ming.rest.member.req.EditReq;
 import com.hung.ming.rest.member.req.GetPageReq;
 import com.hung.ming.rest.member.req.GetReq;
@@ -16,7 +17,6 @@ import com.hung.ming.svc.member.query.GetQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,7 +45,7 @@ public class MemberCtrl {
     if (BooleanUtils.isFalse(page.isEmpty())) {
       List<MemberVo> vos = page.getContent().stream().map(dto -> {
         MemberVo vo = new MemberVo();
-        BeanUtils.copyProperties(dto, vo);
+        PropertyUtilsProxy.copyProperties(vo, dto);
         return vo;
       }).toList();
       voPage = PageableExecutionUtils.getPage(vos, page.getPageable(), page::getTotalElements);
@@ -63,7 +63,7 @@ public class MemberCtrl {
 
     return Optional.ofNullable(dto).map(d -> {
       MemberVo vo = new MemberVo();
-      BeanUtils.copyProperties(d, vo);
+      PropertyUtilsProxy.copyProperties(vo, d);
       return vo;
     }).orElse(null);
   }
@@ -72,7 +72,7 @@ public class MemberCtrl {
   @PostMapping("/register")
   public boolean register(@RequestBody RegisterReq req) {
     RegisterCommand command = new RegisterCommand();
-    BeanUtils.copyProperties(req, command);
+    PropertyUtilsProxy.copyProperties(command, req);
     return memberSvc.register(command);
   }
 
@@ -80,7 +80,7 @@ public class MemberCtrl {
   @PostMapping("/unRegister")
   public boolean unRegister(@RequestBody UnRegisterReq req) {
     UnRegisterCommand command = new UnRegisterCommand();
-    BeanUtils.copyProperties(req, command);
+    PropertyUtilsProxy.copyProperties(command, req);
     return memberSvc.unRegister(command);
   }
 
@@ -88,7 +88,7 @@ public class MemberCtrl {
   @PostMapping("/edit")
   public boolean edit(@RequestBody EditReq req) {
     EditCommand command = new EditCommand();
-    BeanUtils.copyProperties(req, command);
+    PropertyUtilsProxy.copyProperties(command, req);
     return memberSvc.edit(command);
   }
 }

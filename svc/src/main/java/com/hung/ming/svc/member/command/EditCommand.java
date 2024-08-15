@@ -6,7 +6,7 @@ import java.sql.Date;
 
 @Data
 public class EditCommand {
-  private String username;
+  private String id;
 
   private String email;
 
