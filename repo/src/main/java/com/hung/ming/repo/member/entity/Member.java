@@ -1,4 +1,4 @@
-package com.hung.ming.repo.entity;
+package com.hung.ming.repo.member.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

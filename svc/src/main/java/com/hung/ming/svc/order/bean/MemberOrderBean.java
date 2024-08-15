@@ -1,11 +1,11 @@
-package com.hung.ming.rest.member.resp;
+package com.hung.ming.svc.order.bean;
 
 import lombok.Data;
 
 import java.sql.Date;
 
 @Data
-public class MemberVo {
+public class MemberOrderBean {
   private String id;
 
   private String username;
@@ -17,4 +17,6 @@ public class MemberVo {
   private Date dateOfBirth;
 
   private String phoneNumber;
+
+  private Long count;
 }

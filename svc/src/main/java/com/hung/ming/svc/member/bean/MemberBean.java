@@ -1,7 +1,7 @@
-package com.hung.ming.svc.member.dto;
+package com.hung.ming.svc.member.bean;
 
 
-import com.hung.ming.repo.entity.Member;
+import com.hung.ming.repo.member.entity.Member;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -10,6 +10,6 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class MemberDto extends Member {
+public class MemberBean extends Member {
 
 }

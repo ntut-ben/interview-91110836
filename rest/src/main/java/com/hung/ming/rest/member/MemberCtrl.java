@@ -11,7 +11,7 @@ import com.hung.ming.svc.member.IMemberSvc;
 import com.hung.ming.svc.member.command.EditCommand;
 import com.hung.ming.svc.member.command.RegisterCommand;
 import com.hung.ming.svc.member.command.UnRegisterCommand;
-import com.hung.ming.svc.member.dto.MemberDto;
+import com.hung.ming.svc.member.bean.MemberBean;
 import com.hung.ming.svc.member.query.GetPageQuery;
 import com.hung.ming.svc.member.query.GetQuery;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +41,7 @@ public class MemberCtrl {
   @GetMapping("/members")
   public Page<MemberVo> getMemberPage(GetPageReq req) {
     GetPageQuery query = new GetPageQuery(req.pageable());
-    Page<MemberDto> page = memberSvc.getMemberPage(query);
+    Page<MemberBean> page = memberSvc.getMemberPage(query);
 
     Page<MemberVo> voPage = Page.empty();
 
@@ -62,7 +62,7 @@ public class MemberCtrl {
   public MemberVo getMember(GetReq req) {
     GetQuery query = new GetQuery(req.getId());
 
-    MemberDto dto = memberSvc.getMember(query);
+    MemberBean dto = memberSvc.getMember(query);
 
     return Optional.ofNullable(dto).map(d -> {
       MemberVo vo = new MemberVo();
