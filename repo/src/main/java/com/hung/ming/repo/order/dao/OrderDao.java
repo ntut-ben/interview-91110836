@@ -7,7 +7,7 @@ import com.hung.ming.repo.order.dto.ProductDto;
 import com.hung.ming.repo.order.entity.Order;
 import com.hung.ming.repo.order.entity.QOrder;
 import com.hung.ming.repo.order.entity.QOrderProduct;
-import com.hung.ming.repo.order.entity.QProduct;
+import com.hung.ming.repo.product.entity.QProduct;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
@@ -23,6 +23,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.sql.JPASQLQuery;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -78,9 +79,9 @@ public class OrderDao extends BaseDao implements IOrderDao {
     QOrder qOrder = QOrder.order;
     QOrderProduct qOrderProduct = QOrderProduct.orderProduct;
 
-    JPAQuery<Order> orderQuery = jpaQueryFactory.select(qOrder).from(qOrder)
-        .join(qOrderProduct).on(qOrder.id.eq(qOrderProduct.orderId))
-        .join(qProduct).on(qOrderProduct.productId.eq(qProduct.id));
+    JPAQuery<Order> orderQuery = jpaQueryFactory.selectDistinct(qOrder).from(qOrder)
+        .leftJoin(qOrderProduct).on(qOrder.id.eq(qOrderProduct.id.orderId))
+        .leftJoin(qProduct).on(qOrderProduct.id.productId.eq(qProduct.id));
 
     Predicate predicate = new BooleanBuilder();
     if (StringUtils.isNotEmpty(orderNo)) {
@@ -100,10 +101,11 @@ public class OrderDao extends BaseDao implements IOrderDao {
     }
 
     orderQuery = orderQuery.where(predicate);
+    Long total = orderQuery.fetchCount();
 
     JPQLQuery<Order> query = getQuerydsl().applyPagination(pageable, orderQuery);
-
-    return PageableExecutionUtils.getPage(query.fetch(), pageable, orderQuery::fetchCount);
+    List<Order> result = query.fetch();
+    return PageableExecutionUtils.getPage(result, pageable, () -> total);
   }
 
   @Override
@@ -113,10 +115,10 @@ public class OrderDao extends BaseDao implements IOrderDao {
     QOrderProduct qOrderProduct = QOrderProduct.orderProduct;
 
     return jpaQueryFactory.select(
-            Projections.constructor(ProductDto.class, qOrderProduct.orderId, qProduct.name,
+            Projections.constructor(ProductDto.class, qOrderProduct.id.orderId, qProduct.name,
                 qProduct.description, qOrderProduct.quantity)).from(qOrderProduct)
-        .join(qProduct).on(qProduct.id.eq(qOrderProduct.productId))
-        .where(qOrderProduct.orderId.in(orderIds))
+        .join(qProduct).on(qProduct.id.eq(qOrderProduct.id.productId))
+        .where(qOrderProduct.id.orderId.in(orderIds))
         .fetch();
   }
 }

@@ -1,4 +1,4 @@
-package com.hung.ming.repo.order.entity;
+package com.hung.ming.repo.product.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

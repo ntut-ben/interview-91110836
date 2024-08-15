@@ -3,11 +3,13 @@ package com.hung.ming.rest.order;
 import com.hung.ming.repo.util.PropertyUtilsProxy;
 import com.hung.ming.rest.order.req.GetMemberOrderStatisticsReq;
 import com.hung.ming.rest.order.req.GetOrderReq;
+import com.hung.ming.rest.order.req.OrderReq;
 import com.hung.ming.rest.order.resp.MemberOrderVo;
 import com.hung.ming.rest.order.resp.OrderVo;
 import com.hung.ming.svc.order.IOrderSvc;
 import com.hung.ming.svc.order.bean.MemberOrderBean;
 import com.hung.ming.svc.order.bean.OrderBean;
+import com.hung.ming.svc.order.command.OrderCommand;
 import com.hung.ming.svc.order.query.GetMemberOrderStatisticsQuery;
 import com.hung.ming.svc.order.query.GetOrderQuery;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,9 +32,10 @@ public class OrderCtrl {
   private final IOrderSvc orderSvc;
 
   @PostMapping("/order")
-  public String order() {
-    //      3. 請設計一個訂單訂購api，會員可以訂購產品。
-    return "order";
+  public String order(@RequestBody OrderReq req) {
+    OrderCommand command = new OrderCommand();
+    PropertyUtilsProxy.copyProperties(command, req);
+    return orderSvc.order(command);
   }
 
   @GetMapping("/orders")
