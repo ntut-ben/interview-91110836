@@ -1,0 +1,16 @@
+spring:
+  jackson:
+    # Date format string or a fully-qualified date format class name
+    date-format: yyyy/MM/dd HH:mm:ss
+  profiles:
+    group:
+      dev:
+        - devDB
+
+# Server configuration
+server:
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration monitorInterval="30">
+  <Properties>
+    <Property name="log.root.path">./logs</Property>
+    <Property name="fileName">rest</Property>
+  </Properties>
+
+  <appenders>
+    <console name="Console" target="SYSTEM_OUT">
+      <PatternLayout
+        pattern="%highlight{%clr{(%d{ISO8601})}{red} %clr{(%-5level) [(%t)]}{blue} %clr{(%C)}{yellow}: %msg%n%throwable}"
+        disableAnsi="false"/>
+    </console>
+
+    <RollingFile name="RollingFile" fileName="${log.root.path}/${fileName}.log"
+      filePattern="${log.root.path}/archived/${fileName}-%d{yyyy-MM-dd}.%i.log">
+      <PatternLayout pattern="%d %p %C [%t] %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+
+      <DefaultRolloverStrategy>
+        <Delete basePath="${log.root.path}/archived" maxDepth="1">
+          <IfFileName glob="*.log"/>
+          <IfLastModified age="7d"/>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+
+  </appenders>
+
+  <loggers>
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+      <appender-ref ref="RollingFile"/>
+      <appender-ref ref="Console"/>
+    </root>
+
+    <!-- LOG "com.megabank*" at TRACE level -->
+    <logger name="com.megabank" level="debug" additivity="false">
+      <appender-ref ref="RollingFile"/>
+      <appender-ref ref="Console"/>
+    </logger>
+
+    <!-- 開啟 Hibernate binding parameter log -->
+    <logger name="org.hibernate.SQL" level="debug"/>
+    <logger name="org.hibernate.orm.jdbc.bind" level="trace"/>
+  </loggers>
+</configuration>
