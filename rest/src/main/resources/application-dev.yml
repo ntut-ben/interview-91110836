@@ -8,6 +8,10 @@ spring:
 
 logging:
   config: 'classpath:config/dev/log4j2.xml'
+  level:
+    org:
+      springdoc: DEBUG
+
 
 # Server configuration
 server:
@@ -15,4 +19,12 @@ server:
   servlet:
     context-path: /api
 
-
+# api documentation
+springdoc:
+  api-docs:
+    enabled: true
+  #    path: /api-docs
+  swagger-ui:
+    #    display-request-duration: true
+    #    path: /swagger-ui.html
+    enabled: true

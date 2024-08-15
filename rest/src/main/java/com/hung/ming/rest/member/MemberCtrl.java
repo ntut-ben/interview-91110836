@@ -13,6 +13,7 @@ import com.hung.ming.svc.member.command.UnRegisterCommand;
 import com.hung.ming.svc.member.dto.MemberDto;
 import com.hung.ming.svc.member.query.GetPageQuery;
 import com.hung.ming.svc.member.query.GetQuery;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +34,7 @@ public class MemberCtrl {
 
   private final IMemberSvc memberSvc;
 
+  @Operation(description = "取得會員資料分頁")
   @PostMapping("/getMemberPage")
   public Page<MemberVo> getMemberPage(@RequestBody GetPageReq req) {
     GetPageQuery query = new GetPageQuery(req.pageable());

@@ -1,5 +1,6 @@
 package com.hung.ming.rest.common.req;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,9 +13,9 @@ import org.springframework.data.domain.Pageable;
 @NoArgsConstructor
 public class PageRq {
 
-  /** 頁碼 */
+  @Schema(description = "分頁", example = "0")
   private int page;
-  /** 資料筆數 */
+  @Schema(description = " 資料筆數", example = "10")
   private int size;
 
   public Pageable pageable() {
