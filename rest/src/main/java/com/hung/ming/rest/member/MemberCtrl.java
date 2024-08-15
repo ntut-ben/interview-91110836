@@ -19,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +38,8 @@ public class MemberCtrl {
   private final IMemberSvc memberSvc;
 
   @Operation(description = "取得會員資料分頁")
-  @PostMapping("/getMemberPage")
-  public Page<MemberVo> getMemberPage(@RequestBody GetPageReq req) {
+  @GetMapping("/members")
+  public Page<MemberVo> getMemberPage(GetPageReq req) {
     GetPageQuery query = new GetPageQuery(req.pageable());
     Page<MemberDto> page = memberSvc.getMemberPage(query);
 
@@ -55,8 +58,8 @@ public class MemberCtrl {
   }
 
   @Operation(description = "取得會員資料")
-  @PostMapping("/getMember")
-  public MemberVo getMember(@RequestBody GetReq req) {
+  @GetMapping("/member")
+  public MemberVo getMember(GetReq req) {
     GetQuery query = new GetQuery(req.getId());
 
     MemberDto dto = memberSvc.getMember(query);
@@ -69,7 +72,7 @@ public class MemberCtrl {
   }
 
   @Operation(description = "註冊會員")
-  @PostMapping("/register")
+  @PostMapping("/member")
   public boolean register(@RequestBody RegisterReq req) {
     RegisterCommand command = new RegisterCommand();
     PropertyUtilsProxy.copyProperties(command, req);
@@ -77,16 +80,16 @@ public class MemberCtrl {
   }
 
   @Operation(description = "刪除會員")
-  @PostMapping("/unRegister")
-  public boolean unRegister(@RequestBody UnRegisterReq req) {
+  @DeleteMapping("/member")
+  public boolean unRegister(UnRegisterReq req) {
     UnRegisterCommand command = new UnRegisterCommand();
     PropertyUtilsProxy.copyProperties(command, req);
     return memberSvc.unRegister(command);
   }
 
   @Operation(description = "會員資料修改")
-  @PostMapping("/edit")
-  public boolean edit(@RequestBody EditReq req) {
+  @PatchMapping("/member")
+  public boolean edit(EditReq req) {
     EditCommand command = new EditCommand();
     PropertyUtilsProxy.copyProperties(command, req);
     return memberSvc.edit(command);
