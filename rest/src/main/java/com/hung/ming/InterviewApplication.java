@@ -1,4 +1,4 @@
-package com.hung.ming.rest;
+package com.hung.ming;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

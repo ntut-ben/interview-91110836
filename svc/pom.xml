@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>svc</artifactId>
-    <description>業務服務</description>
     <name>svc</name>
+    <description>svc</description>
 
     <dependencies>
         <dependency>
@@ -19,6 +19,5 @@
             <version>${revision}</version>
         </dependency>
     </dependencies>
-
 
 </project>
