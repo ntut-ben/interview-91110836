@@ -2,11 +2,14 @@ package com.hung.ming.rest.order;
 
 import com.hung.ming.repo.util.PropertyUtilsProxy;
 import com.hung.ming.rest.order.req.GetMemberOrderStatisticsReq;
+import com.hung.ming.rest.order.req.GetOrderReq;
 import com.hung.ming.rest.order.resp.MemberOrderVo;
 import com.hung.ming.rest.order.resp.OrderVo;
 import com.hung.ming.svc.order.IOrderSvc;
 import com.hung.ming.svc.order.bean.MemberOrderBean;
-import com.hung.ming.svc.order.command.GetMemberOrderStatisticsCommand;
+import com.hung.ming.svc.order.bean.OrderBean;
+import com.hung.ming.svc.order.query.GetMemberOrderStatisticsQuery;
+import com.hung.ming.svc.order.query.GetOrderQuery;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
@@ -32,15 +35,25 @@ public class OrderCtrl {
   }
 
   @GetMapping("/orders")
-  public Page<OrderVo> getOrders() {
-    //      4. 請設計一個訂單查詢api，會員可以根據訂單編號或產品名稱或購買日期做分頁查詢。
+  public Page<OrderVo> getOrders(GetOrderReq req) {
+    GetOrderQuery query = new GetOrderQuery();
+    PropertyUtilsProxy.copyProperties(query, req);
+    Page<OrderBean> page = orderSvc.getOrders(query, req.pageable());
+
+    if (page.hasContent()) {
+      return page.map(bean -> {
+        OrderVo vo = new OrderVo();
+        PropertyUtilsProxy.copyProperties(vo, bean);
+        return vo;
+      });
+    }
     return Page.empty();
   }
 
   @GetMapping("/statistics")
   public List<MemberOrderVo> getMemberOrderStatistics(GetMemberOrderStatisticsReq req) {
-    GetMemberOrderStatisticsCommand command = new GetMemberOrderStatisticsCommand(req.getCount());
-    List<MemberOrderBean> beans = orderSvc.getMemberOrderStatistics(command);
+    GetMemberOrderStatisticsQuery query = new GetMemberOrderStatisticsQuery(req.getCount());
+    List<MemberOrderBean> beans = orderSvc.getMemberOrderStatistics(query);
 
     if (CollectionUtils.isNotEmpty(beans)) {
       return beans.stream()

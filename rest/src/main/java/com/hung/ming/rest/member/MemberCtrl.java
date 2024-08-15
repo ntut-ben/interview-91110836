@@ -8,17 +8,15 @@ import com.hung.ming.rest.member.req.RegisterReq;
 import com.hung.ming.rest.member.req.UnRegisterReq;
 import com.hung.ming.rest.member.resp.MemberVo;
 import com.hung.ming.svc.member.IMemberSvc;
+import com.hung.ming.svc.member.bean.MemberBean;
 import com.hung.ming.svc.member.command.EditCommand;
 import com.hung.ming.svc.member.command.RegisterCommand;
 import com.hung.ming.svc.member.command.UnRegisterCommand;
-import com.hung.ming.svc.member.bean.MemberBean;
 import com.hung.ming.svc.member.query.GetPageQuery;
 import com.hung.ming.svc.member.query.GetQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -45,13 +42,12 @@ public class MemberCtrl {
 
     Page<MemberVo> voPage = Page.empty();
 
-    if (BooleanUtils.isFalse(page.isEmpty())) {
-      List<MemberVo> vos = page.getContent().stream().map(dto -> {
+    if (page.hasContent()) {
+      voPage = page.map(dto -> {
         MemberVo vo = new MemberVo();
         PropertyUtilsProxy.copyProperties(vo, dto);
         return vo;
-      }).toList();
-      voPage = PageableExecutionUtils.getPage(vos, page.getPageable(), page::getTotalElements);
+      });
     }
 
     return voPage;

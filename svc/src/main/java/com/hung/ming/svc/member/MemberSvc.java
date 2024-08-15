@@ -3,21 +3,19 @@ package com.hung.ming.svc.member;
 import com.hung.ming.repo.member.entity.Member;
 import com.hung.ming.repo.member.repo.IMemberRepo;
 import com.hung.ming.repo.util.PropertyUtilsProxy;
+import com.hung.ming.svc.member.bean.MemberBean;
 import com.hung.ming.svc.member.command.EditCommand;
 import com.hung.ming.svc.member.command.RegisterCommand;
 import com.hung.ming.svc.member.command.UnRegisterCommand;
-import com.hung.ming.svc.member.bean.MemberBean;
 import com.hung.ming.svc.member.query.GetPageQuery;
 import com.hung.ming.svc.member.query.GetQuery;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,13 +31,16 @@ public class MemberSvc implements IMemberSvc {
   @Override
   public Page<MemberBean> getMemberPage(GetPageQuery query) {
     Page<Member> memberPage = memberRepo.findAll(query.getPageable());
-    List<MemberBean> memberBeans = memberPage.getContent().stream().map(entity -> {
-      MemberBean dto = new MemberBean();
-      PropertyUtilsProxy.copyProperties(dto, entity);
-      return dto;
-    }).toList();
-    return PageableExecutionUtils.getPage(memberBeans, memberPage.getPageable(),
-        memberPage::getTotalElements);
+
+    if (memberPage.hasContent()) {
+      return memberPage.map(entity -> {
+        MemberBean bean = new MemberBean();
+        PropertyUtilsProxy.copyProperties(bean, entity);
+        return bean;
+      });
+    }
+
+    return Page.empty();
   }
 
   @Override

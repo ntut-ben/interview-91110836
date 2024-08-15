@@ -1,13 +1,12 @@
-package com.hung.ming.rest.order.resp;
+package com.hung.ming.repo.order.dto;
 
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
 
 @Data
-public class OrderVo {
+public class OrderDto {
   private String id;
 
   private String memberId;
@@ -19,6 +18,4 @@ public class OrderVo {
   private String status;
 
   private Timestamp createdTime;
-
-  List<ProductVo> products;
 }

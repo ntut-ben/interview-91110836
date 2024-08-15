@@ -1,4 +1,4 @@
-package com.hung.ming.rest.order.resp;
+package com.hung.ming.svc.order.bean;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Data
-public class OrderVo {
+public class OrderBean {
   private String id;
 
   private String memberId;
@@ -20,5 +20,5 @@ public class OrderVo {
 
   private Timestamp createdTime;
 
-  List<ProductVo> products;
+  List<ProductBean> products;
 }

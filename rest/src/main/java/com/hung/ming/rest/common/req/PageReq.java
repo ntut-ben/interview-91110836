@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageRq {
+public class PageReq {
 
   @Schema(description = "分頁", example = "0")
   private int page;

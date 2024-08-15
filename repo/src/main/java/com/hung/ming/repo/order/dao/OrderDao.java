@@ -3,27 +3,43 @@ package com.hung.ming.repo.order.dao;
 import com.hung.ming.repo.common.dao.BaseDao;
 import com.hung.ming.repo.member.entity.QMember;
 import com.hung.ming.repo.order.dto.MemberOrderDto;
+import com.hung.ming.repo.order.dto.ProductDto;
 import com.hung.ming.repo.order.entity.Order;
 import com.hung.ming.repo.order.entity.QOrder;
+import com.hung.ming.repo.order.entity.QOrderProduct;
+import com.hung.ming.repo.order.entity.QProduct;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.SimplePath;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.sql.JPASQLQuery;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Repository
 public class OrderDao extends BaseDao implements IOrderDao {
-  public OrderDao() {
-    super(Order.class);
-  }
+  private final JPAQueryFactory jpaQueryFactory;
 
-  public OrderDao(Class<?> domainClass) {
-    super(domainClass);
+  public OrderDao(@Autowired JPAQueryFactory jpaQueryFactory) {
+    super(Order.class);
+    this.jpaQueryFactory = jpaQueryFactory;
   }
 
   @Override
@@ -52,5 +68,55 @@ public class OrderDao extends BaseDao implements IOrderDao {
 
 
     return query.fetch();
+  }
+
+  @Override
+  public Page<Order> getOrders(String orderNo, Timestamp orderCreateDate, String productName,
+      Pageable pageable) {
+
+    QProduct qProduct = QProduct.product;
+    QOrder qOrder = QOrder.order;
+    QOrderProduct qOrderProduct = QOrderProduct.orderProduct;
+
+    JPAQuery<Order> orderQuery = jpaQueryFactory.select(qOrder).from(qOrder)
+        .join(qOrderProduct).on(qOrder.id.eq(qOrderProduct.orderId))
+        .join(qProduct).on(qOrderProduct.productId.eq(qProduct.id));
+
+    Predicate predicate = new BooleanBuilder();
+    if (StringUtils.isNotEmpty(orderNo)) {
+      predicate = ExpressionUtils.and(predicate, qOrder.id.eq(orderNo));
+    }
+
+    if (ObjectUtils.isNotEmpty(orderCreateDate)) {
+      final String formatter = "yyyy-MM-dd HH:mm:ss";
+      String orderCreateDateStr = new SimpleDateFormat(formatter).format(orderCreateDate);
+      predicate = ExpressionUtils.and(predicate,
+          Expressions.stringTemplate(String.format("FORMATDATETIME({0}, '%s')", formatter),
+              qOrder.orderDate).eq(orderCreateDateStr));
+    }
+
+    if (StringUtils.isNotEmpty(productName)) {
+      predicate = ExpressionUtils.and(predicate, qProduct.name.eq(productName));
+    }
+
+    orderQuery = orderQuery.where(predicate);
+
+    JPQLQuery<Order> query = getQuerydsl().applyPagination(pageable, orderQuery);
+
+    return PageableExecutionUtils.getPage(query.fetch(), pageable, orderQuery::fetchCount);
+  }
+
+  @Override
+  public List<ProductDto> getOrderProducts(List<String> orderIds) {
+    QProduct qProduct = QProduct.product;
+
+    QOrderProduct qOrderProduct = QOrderProduct.orderProduct;
+
+    return jpaQueryFactory.select(
+            Projections.constructor(ProductDto.class, qOrderProduct.orderId, qProduct.name,
+                qProduct.description, qOrderProduct.quantity)).from(qOrderProduct)
+        .join(qProduct).on(qProduct.id.eq(qOrderProduct.productId))
+        .where(qOrderProduct.orderId.in(orderIds))
+        .fetch();
   }
 }
