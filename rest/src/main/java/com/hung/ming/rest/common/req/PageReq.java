@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 @NoArgsConstructor
 public class PageReq {
 
-  @Schema(description = "分頁", example = "0")
+  @Schema(description = "分頁", example = "1")
   private int page;
   @Schema(description = " 資料筆數", example = "10")
   private int size;

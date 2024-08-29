@@ -2,7 +2,6 @@ package com.hung.ming.rest.member.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.antlr.v4.runtime.misc.NotNull;
 
 @Data
 public class GetReq {

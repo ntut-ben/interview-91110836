@@ -9,6 +9,12 @@ spring:
 logging:
   config: 'classpath:config/dev/log4j2.xml'
   level:
+    com:
+      hung:
+        ming:
+          repo:
+            member:
+              mapper: DEBUG
     org:
       springdoc: DEBUG
 
