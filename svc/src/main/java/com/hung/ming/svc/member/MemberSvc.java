@@ -6,12 +6,17 @@ import com.hung.ming.repo.member.entity.Member;
 import com.hung.ming.repo.member.mapper.IMemberMapper;
 import com.hung.ming.repo.util.PropertyUtilsProxy;
 import com.hung.ming.svc.member.bean.MemberBean;
+import com.hung.ming.svc.member.command.RegisterCommand;
 import com.hung.ming.svc.member.query.GetPageQuery;
+import com.hung.ming.svc.member.query.GetQuery;
 import lombok.AllArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -42,35 +47,36 @@ public class MemberSvc implements IMemberSvc {
     return memberBeanPage;
   }
 
-  //  @Override
-  //  public MemberBean getMember(GetQuery query) {
-  //    return memberMapper.findById(query.getId()).map(entity -> {
-  //      MemberBean dto = new MemberBean();
-  //      PropertyUtilsProxy.copyProperties(dto, entity);
-  //      return dto;
-  //    }).orElse(null);
-  //  }
-  //
-  //  @Transactional
-  //  @Override
-  //  public boolean register(RegisterCommand command) {
-  //    boolean isRegister = false;
-  //    Member member = new Member();
-  //    Timestamp now = new Timestamp(System.currentTimeMillis());
-  //    PropertyUtilsProxy.copyProperties(member, command);
-  //    member.setId(UUID.randomUUID().toString());
-  //    member.setStatus(ACTIVE);
-  //    member.setCreatedTime(now);
-  //    member.setUpdateTime(now);
-  //
-  //    if (BooleanUtils.isFalse(
-  //        memberMapper.existsByEmailOrUsername(command.getEmail(), command.getUsername()))) {
-  //      memberMapper.save(member);
-  //      isRegister = true;
-  //    }
-  //
-  //    return isRegister;
-  //  }
+    @Override
+    public MemberBean getMember(GetQuery query) {
+      return memberMapper.findById(query.getId()).map(entity -> {
+        MemberBean dto = new MemberBean();
+        PropertyUtilsProxy.copyProperties(dto, entity);
+        return dto;
+      }).orElse(null);
+    }
+
+    @Transactional
+    @Override
+    public boolean register(RegisterCommand command) {
+      boolean isRegister = false;
+      Member member = new Member();
+      Timestamp now = new Timestamp(System.currentTimeMillis());
+      PropertyUtilsProxy.copyProperties(member, command);
+      member.setId(UUID.randomUUID().toString());
+      member.setStatus(ACTIVE);
+      member.setCreatedTime(now);
+      member.setUpdateTime(now);
+
+      if (BooleanUtils.isFalse(
+          memberMapper.existsByEmailOrUsername(command.getEmail(), command.getUsername()))) {
+        memberMapper.save(member);
+        isRegister = true;
+      }
+
+      return isRegister;
+    }
+
   //
   //  @Transactional
   //  @Override
