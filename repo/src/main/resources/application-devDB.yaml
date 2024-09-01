@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;TIME ZONE=Asia/Taipei
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -14,12 +14,12 @@ spring:
     defaultCount: true
 
 mybatis:
-  type-aliases-package: com.hung.ming.repo.entity
+  type-aliases-package: com.hung.ming.repo.entity, com.hung.ming.repo.command, com.hung.ming.repo.dto, com.hung.ming.repo.query
   mapper-locations: classpath:com/hung/ming/repo/mapper/*.xml
   mapper-default-scope: com.hung.ming.repo.mapper
   configuration:
     default-fetch-size: 100
     default-statement-timeout: 30
     map-underscore-to-camel-case: true
-
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hung.ming.repo.mapper.IOrderMapper">
+
+    <select id="findByIdWithLock" resultType="Order">
+        select *
+        from ORDER_TABLE
+        where id = #{id} for update
+    </select>
+
+    <select id="getOrders" resultType="Order" parameterType="QGetOrderQuery">
+        select distinct ORDER_TABLE.*
+        from ORDER_TABLE
+        left join ORDER_PRODUCT on ORDER_TABLE.id = ORDER_PRODUCT.order_id
+        left join PRODUCT on ORDER_PRODUCT.product_id = PRODUCT.id
+        <where>
+            <if test="orderNo != null and orderNo != ''">
+                ORDER_TABLE.ID = #{orderNo}
+            </if>
+            <if test="orderCreateDate != null">
+                AND FORMATDATETIME(ORDER_DATE, 'yyyy-MM-dd HH:mm:ss') = #{orderCreateDate}
+            </if>
+            <if test="productName != null and productName != ''">
+                AND NAME = #{productName}
+            </if>
+        </where>
+    </select>
+
+    <select id="getMemberOrderStatistics" resultType="MemberOrderDto" parameterType="int">
+        select MEMBER.ID, USERNAME, EMAIL, FULL_NAME, DATE_OF_BIRTH, PHONE_NUMBER, cnt as count
+        from MEMBER
+                 join (select MEMBER_ID, count(MEMBER_ID) as cnt
+                       From ORDER_TABLE
+                       group by MEMBER_ID
+                       having count(MEMBER_ID) >= #{cnt}) as subQuery
+                      on MEMBER_ID = MEMBER.ID
+    </select>
+
+    <insert id="save" parameterType="Order">
+        insert into ORDER_TABLE
+        values (#{id}, #{memberId}, #{orderDate}, #{totalAmount}, #{status}, #{createdTime}, #{updateTime})
+    </insert>
+
+    <update id="update" parameterType="Order">
+        update ORDER_TABLE
+        set TOTAL_AMOUNT = #{totalAmount},
+            UPDATE_TIME  = #{updateTime}
+        where id = #{id}
+    </update>
+
+</mapper>

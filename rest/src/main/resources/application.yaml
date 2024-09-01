@@ -2,6 +2,7 @@ spring:
   jackson:
     # Date format string or a fully-qualified date format class name
     date-format: yyyy/MM/dd HH:mm:ss
+    time-zone: Asia/Taipei
   profiles:
     group:
       dev:

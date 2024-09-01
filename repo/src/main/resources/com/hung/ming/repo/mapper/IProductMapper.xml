@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hung.ming.repo.mapper.IProductMapper">
+
+    <select id="findByIdWithLock" resultType="Product">
+        select *
+        from PRODUCT
+        where id = #{id} for update
+    </select>
+
+    <select id="getProductByOrderId" resultType="ProductDto">
+        select ORDER_ID , NAME , DESCRIPTION , QUANTITY
+        from PRODUCT p
+        join ORDER_PRODUCT op on p.id = op.product_id
+        where op.order_id in
+        <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </select>
+
+    <insert id="save" parameterType="Product">
+        insert into PRODUCT
+        values (#{name}, #{name}, #{description}, #{price}, #{stock}, #{createdTime}, #{updateTime})
+    </insert>
+
+
+</mapper>
