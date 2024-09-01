@@ -1,7 +1,7 @@
 package com.hung.ming.svc.member.bean;
 
 
-import com.hung.ming.repo.member.entity.Member;
+import com.hung.ming.repo.entity.Member;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

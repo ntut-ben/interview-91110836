@@ -1,4 +1,4 @@
-package com.hung.ming.repo.member.entity;
+package com.hung.ming.repo.entity;
 
 import lombok.Data;
 

@@ -2,11 +2,14 @@ package com.hung.ming.svc.member;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hung.ming.repo.member.entity.Member;
-import com.hung.ming.repo.member.mapper.IMemberMapper;
+import com.hung.ming.repo.command.member.QEditCommand;
+import com.hung.ming.repo.entity.Member;
+import com.hung.ming.repo.mapper.IMemberMapper;
 import com.hung.ming.repo.util.PropertyUtilsProxy;
 import com.hung.ming.svc.member.bean.MemberBean;
+import com.hung.ming.svc.member.command.EditCommand;
 import com.hung.ming.svc.member.command.RegisterCommand;
+import com.hung.ming.svc.member.command.UnRegisterCommand;
 import com.hung.ming.svc.member.query.GetPageQuery;
 import com.hung.ming.svc.member.query.GetQuery;
 import lombok.AllArgsConstructor;
@@ -47,61 +50,50 @@ public class MemberSvc implements IMemberSvc {
     return memberBeanPage;
   }
 
-    @Override
-    public MemberBean getMember(GetQuery query) {
-      return memberMapper.findById(query.getId()).map(entity -> {
-        MemberBean dto = new MemberBean();
-        PropertyUtilsProxy.copyProperties(dto, entity);
-        return dto;
-      }).orElse(null);
+  @Override
+  public MemberBean getMember(GetQuery query) {
+    return memberMapper.findById(query.getId()).map(entity -> {
+      MemberBean dto = new MemberBean();
+      PropertyUtilsProxy.copyProperties(dto, entity);
+      return dto;
+    }).orElse(null);
+  }
+
+  @Transactional
+  @Override
+  public boolean register(RegisterCommand command) {
+    boolean isRegister = false;
+    Member member = new Member();
+    Timestamp now = new Timestamp(System.currentTimeMillis());
+    PropertyUtilsProxy.copyProperties(member, command);
+    member.setId(UUID.randomUUID().toString());
+    member.setStatus(ACTIVE);
+    member.setCreatedTime(now);
+    member.setUpdateTime(now);
+
+    if (BooleanUtils.isFalse(
+        memberMapper.existsByEmailOrUsername(command.getEmail(), command.getUsername()))) {
+      int count = memberMapper.save(member);
+      isRegister = count > 0;
     }
 
-    @Transactional
-    @Override
-    public boolean register(RegisterCommand command) {
-      boolean isRegister = false;
-      Member member = new Member();
-      Timestamp now = new Timestamp(System.currentTimeMillis());
-      PropertyUtilsProxy.copyProperties(member, command);
-      member.setId(UUID.randomUUID().toString());
-      member.setStatus(ACTIVE);
-      member.setCreatedTime(now);
-      member.setUpdateTime(now);
+    return isRegister;
+  }
 
-      if (BooleanUtils.isFalse(
-          memberMapper.existsByEmailOrUsername(command.getEmail(), command.getUsername()))) {
-        memberMapper.save(member);
-        isRegister = true;
-      }
+  @Transactional
+  @Override
+  public boolean unRegister(UnRegisterCommand command) {
+    int count = memberMapper.deleteById(command.getId());
+    return count > 0;
+  }
 
-      return isRegister;
-    }
+  @Transactional
+  @Override
+  public boolean edit(EditCommand command) {
+    QEditCommand editCommand = new QEditCommand();
+    PropertyUtilsProxy.copyProperties(editCommand, command);
+    int count = memberMapper.updateById(editCommand);
+    return count > 0;
+  }
 
-  //
-  //  @Transactional
-  //  @Override
-  //  public boolean unRegister(UnRegisterCommand command) {
-  //    boolean isDelete = false;
-  //    if (memberMapper.existsById(command.getId())) {
-  //      memberMapper.deleteById(command.getId());
-  //      isDelete = true;
-  //    }
-  //    return isDelete;
-  //  }
-  //
-  //  @Transactional
-  //  @Override
-  //  public boolean edit(EditCommand command) {
-  //    AtomicBoolean isEdit = new AtomicBoolean(false);
-  //    Optional<Member> memberOptional = memberMapper.findById(command.getId());
-  //
-  //    memberOptional.ifPresent(member -> {
-  //      PropertyUtilsProxy.copyProperties(member, command);
-  //      member.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-  //      memberMapper.save(member);
-  //      isEdit.set(true);
-  //    });
-  //
-  //    return isEdit.get();
-  //  }
 }

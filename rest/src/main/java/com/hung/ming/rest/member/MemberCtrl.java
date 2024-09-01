@@ -2,19 +2,25 @@ package com.hung.ming.rest.member;
 
 import com.github.pagehelper.PageInfo;
 import com.hung.ming.repo.util.PropertyUtilsProxy;
+import com.hung.ming.rest.member.req.EditReq;
 import com.hung.ming.rest.member.req.GetPageReq;
 import com.hung.ming.rest.member.req.GetReq;
 import com.hung.ming.rest.member.req.RegisterReq;
+import com.hung.ming.rest.member.req.UnRegisterReq;
 import com.hung.ming.rest.member.resp.MemberVo;
 import com.hung.ming.svc.member.IMemberSvc;
 import com.hung.ming.svc.member.bean.MemberBean;
+import com.hung.ming.svc.member.command.EditCommand;
 import com.hung.ming.svc.member.command.RegisterCommand;
+import com.hung.ming.svc.member.command.UnRegisterCommand;
 import com.hung.ming.svc.member.query.GetPageQuery;
 import com.hung.ming.svc.member.query.GetQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,20 +78,20 @@ public class MemberCtrl {
     return memberSvc.register(command);
   }
 
-  //
-  //  @Operation(description = "刪除會員")
-  //  @DeleteMapping("/member")
-  //  public boolean unRegister(UnRegisterReq req) {
-  //    UnRegisterCommand command = new UnRegisterCommand();
-  //    PropertyUtilsProxy.copyProperties(command, req);
-  //    return memberSvc.unRegister(command);
-  //  }
-  //
-  //  @Operation(description = "會員資料修改")
-  //  @PatchMapping("/member")
-  //  public boolean edit(EditReq req) {
-  //    EditCommand command = new EditCommand();
-  //    PropertyUtilsProxy.copyProperties(command, req);
-  //    return memberSvc.edit(command);
-  //  }
+
+    @Operation(description = "刪除會員")
+    @DeleteMapping("/member")
+    public boolean unRegister(UnRegisterReq req) {
+      UnRegisterCommand command = new UnRegisterCommand();
+      PropertyUtilsProxy.copyProperties(command, req);
+      return memberSvc.unRegister(command);
+    }
+
+    @Operation(description = "會員資料修改")
+    @PatchMapping("/member")
+    public boolean edit(EditReq req) {
+      EditCommand command = new EditCommand();
+      PropertyUtilsProxy.copyProperties(command, req);
+      return memberSvc.edit(command);
+    }
 }

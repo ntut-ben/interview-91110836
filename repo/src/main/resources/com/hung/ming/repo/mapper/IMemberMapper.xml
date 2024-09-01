@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hung.ming.repo.mapper.IMemberMapper">
+
+    <select id="findAll" resultType="Member">
+        SELECT *
+        FROM MEMBER
+    </select>
+
+    <select id="findById" resultType="Member">
+        SELECT *
+        FROM MEMBER
+        WHERE id = #{id}
+    </select>
+
+    <select id="existsByEmailOrUsername" resultType="Boolean">
+        SELECT EXISTS(SELECT 1 FROM MEMBER WHERE email = #{email} OR username = #{username})
+    </select>
+
+    <insert id="save" parameterType="Member">
+        INSERT INTO MEMBER
+        VALUES (#{id}, #{username}, #{paxx}, #{email}, #{fullName}, #{dateOfBirth}, #{phoneNumber}, #{createdTime},
+                #{updateTime}, #{status})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM MEMBER
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateById">
+        update MEMBER
+        set FULL_NAME     = #{fullName},
+            EMAIL         = #{email},
+            DATE_OF_BIRTH = #{dateOfBirth},
+            PHONE_NUMBER  = #{phoneNumber}
+            where id = #{id}
+    </update>
+</mapper>

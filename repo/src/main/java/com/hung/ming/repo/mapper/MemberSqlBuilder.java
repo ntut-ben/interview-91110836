@@ -1,4 +1,4 @@
-package com.hung.ming.repo.member.sqlBuilder;
+package com.hung.ming.repo.mapper;
 
 import com.hung.ming.repo.common.ISqlBuilder;
 import org.apache.ibatis.jdbc.SQL;
